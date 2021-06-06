@@ -1,0 +1,24 @@
+{
+  "name": "gaia-opencv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "em:init": "bash scripts/em-init.sh",
+    "em:setup": "bash scripts/em-install.sh",
+    "build:copy": "bash scripts/build-copy.sh",
+    "build:main": "source scripts/build-env.sh && bash scripts/build-main.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhengwang/gaia-opencv.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhengwang/gaia-opencv/issues"
+  },
+  "homepage": "https://github.com/zhengwang/gaia-opencv#readme"
+}
