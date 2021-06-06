@@ -98,9 +98,12 @@ filegroup(
 
 cc_library(
     name = "opencv_lib",
-    srcs = glob(["opencv/core/**"]),    
-    hdrs = glob(["opencv/core/include/**"]),    
-    strip_include_prefix = "opencv/core/include",
+    # srcs = glob(["opencv/core/**"]),    
+    # hdrs = glob(["opencv/core/include/**"]),        
+    # strip_include_prefix = "opencv/core/include",
+    srcs = glob(["opencv/libs/**"]),
+    hdrs = glob(["opencv/includes/**"]),
+    strip_include_prefix = "opencv/includes",
     visibility = ["//visibility:public"])    
 """)
 
