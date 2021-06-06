@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "em:init": "bash scripts/em-init.sh",
+    "em:update": "bash scripts/em-update.sh",
     "em:setup": "bash scripts/em-install.sh",
     "build:copy": "bash scripts/build-copy.sh",
     "build:main": "source scripts/build-env.sh && bash scripts/build-main.sh",
