@@ -41,5 +41,5 @@ cc_binary(
     srcs = ["//app/wasm:main.cpp"],
     # copts = MSGPACK_LINKCOPTS,
     linkopts = DEFAULT_EMSCRIPTEN_LINKOPTS + WASM_LINKOPTS,
-    deps = ["@msgpack//:msgpack_lib"]
+    deps = ["@msgpack//:msgpack_lib", "@opencv//:opencv_lib"]
 )

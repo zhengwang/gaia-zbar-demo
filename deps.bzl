@@ -1,7 +1,8 @@
 load("//toolchain:cc_toolchain_config.bzl", 
     "emsdk_configure",
     "msgpack_configure",
-    "boost_configure",)
+    "boost_configure",
+    "opencv_configure")
 
 def app_deps():
     print(" -------- deps ??? -----------")
@@ -10,3 +11,4 @@ def app_deps():
     emsdk_configure(name = "emsdk")
     msgpack_configure(name = "msgpack")
     boost_configure(name = "boost")
+    opencv_configure(name = "opencv")

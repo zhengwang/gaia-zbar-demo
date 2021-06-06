@@ -83,6 +83,32 @@ boost_configure = repository_rule(
     local = True
 )
 
+def _opencv_impl(ctx):
+    print(" ------------- opencv configure ---------------- ")
+    if "OPENCV" not in ctx.os.environ or ctx.os.environ["OPENCV"].strip() == "":
+        fail("The environment variable OPENCV is not found. ")
+    path = ctx.os.environ["OPENCV"]
+    ctx.symlink(path, "opencv")
+    ctx.file("BUILD", """
+filegroup(
+    name = "all",
+    srcs = glob(["opencv/**"]),
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "opencv_lib",
+    srcs = glob(["opencv/core/**"]),    
+    hdrs = glob(["opencv/core/include/**"]),    
+    strip_include_prefix = "opencv/core/include",
+    visibility = ["//visibility:public"])    
+""")
+
+opencv_configure = repository_rule(
+    implementation = _opencv_impl,
+    local = True
+)
+
 
 def _impl(ctx):
     print(" ----------- cc_toolchain_config ------------- ")
