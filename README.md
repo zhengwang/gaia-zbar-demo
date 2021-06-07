@@ -10,7 +10,8 @@ This project is built based on
 Refer `scripts/build-opencv.sh` to build em static lib.
 
 ## Setup EMSDK submodules
-1. > npm run em:setup
+1. 
+> npm run em:setup
 
 ## Build boost emscripten static lib
 1. Generate boost .bc files

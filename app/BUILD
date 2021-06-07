@@ -3,7 +3,8 @@ package(default_visibility = ["//visibility:public"])
 DEFAULT_EMSCRIPTEN_LINKOPTS = [
 	"--no-entry",    
 	"-s ERROR_ON_UNDEFINED_SYMBOLS=1",
-	"-s EXPORTED_FUNCTIONS=['_malloc','_free']",         
+	"-s EXPORTED_FUNCTIONS=['_malloc','_free']", 
+    "-s USE_PTHREADS=0",         
     # "-s USE_BOOST_HEADERS=1"
     # "-s WASM_OBJECT_FILES=0",
     # "--llvm-lto 1"
@@ -49,5 +50,5 @@ cc_binary(
     name = "cvcanny.wasm",
     srcs = ["//app/wasm/modules:cv_canny.cpp"],
     linkopts = DEFAULT_EMSCRIPTEN_LINKOPTS + WASM_LINKOPTS,
-    deps = ["@opencv//:opencv_lib"]
+    deps = ["@opencv//:opencv_lib", "@msgpack//:msgpack_lib", ]
 )

@@ -1,4 +1,5 @@
 #include <msgpack.hpp>
+#include "opencv2/core.hpp"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
