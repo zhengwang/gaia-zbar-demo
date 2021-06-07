@@ -71,7 +71,7 @@ filegroup(
 
 cc_library(
     name = "boost_lib",
-    srcs = glob(["boost/boost/**"]),    
+    srcs = glob(["boost/boost/**", "boost/srcs/**"]),    
     hdrs = glob(["boost/boost/**"]),    
     strip_include_prefix = "boost",
     visibility = ["//visibility:public"])    
@@ -178,7 +178,7 @@ def _impl(ctx):
                 ],
                 flag_groups = [
                     flag_group(
-                        flags = [
+                        flags = [                            
                             # The clang compiler comes with a definition of
                             # max_align_t struct in $emsdk/upstream/lib/clang/13.0.0/include/__stddef_max_align_t.h.
                             # It conflicts with the one defined in
@@ -198,7 +198,7 @@ def _impl(ctx):
                             "-isystem",
                             "external/emsdk/emsdk/upstream/emscripten/cache/sysroot/include/compat",
                             "-isystem",
-                            "external/emsdk/emsdk/upstream/emscripten/cache/sysroot/include",                           
+                            "external/emsdk/emsdk/upstream/emscripten/cache/sysroot/include",                                       
                         ] 
                     )
                 ]
