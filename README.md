@@ -7,7 +7,7 @@ This project is built based on
 1. OpenCV 4.5.2-dev
 
 ## Build opencv static library using EMSDK
-Refer `scripts/build-opencv.sh` to build em static lib.
+Refer `scripts/build-opencv-lib.sh` to build em static lib.
 
 ## Setup EMSDK submodules
 1. 

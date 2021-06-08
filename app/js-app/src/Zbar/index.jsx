@@ -38,17 +38,10 @@ export const Zbar = (props) => {
                     msg_buffer_ptr
                 );
                 
-                const offset = 35;//bytes_memory[msg_buffer_ptr >> 6];
+                const offset = 35;
                 const msg_data = new Uint8Array(moduleExports.memory.buffer, msg_ptr, offset);
                 const msg = decode(msg_data);
-                console.log(msg);
-
-                // const rst_img_data = wasmCls.process(img.data);
-                // const draft_canvas = canvasRef.current;
-                // draft_canvas.width = img.width;
-                // draft_canvas.height = img.height;
-                // const draft_ctx = draft_canvas.getContext("2d");
-                // draft_ctx.putImageData(rst_img_data, 0, 0);                
+                console.log(msg);              
             });
         }
     }, [img]);

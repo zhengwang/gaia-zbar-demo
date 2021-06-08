@@ -41,8 +41,7 @@ extern "C" char* func_zbar(uint8_t* im_data, int cols, int rows, uint8_t* size) 
     msgpack::pack(sbuf, obj);
 
     *size = sbuf.size();
-    return sbuf.data();        
-    // return n;
+    return sbuf.data();            
 }
 
 #ifdef __EMSCRIPTEN__
