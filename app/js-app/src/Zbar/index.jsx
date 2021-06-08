@@ -30,13 +30,14 @@ export const Zbar = (props) => {
                 const bytes_memory = new Uint8ClampedArray(moduleExports.memory.buffer);
                 bytes_memory.set(img.data, img_buffer_ptr, img_buffer_ptr / Uint8ClampedArray.BYTES_PER_ELEMENT);
 
-                const msg_buffer_ptr = moduleExports.malloc(Uint8Array.BYTES_PER_ELEMENT * 8);
+                const msg_buffer_ptr = moduleExports.malloc(Uint8Array.BYTES_PER_ELEMENT * 8);                
                 const msg_ptr = moduleExports.func_zbar(
                     img_buffer_ptr, 
                     img.width, 
                     img.height,
                     msg_buffer_ptr
                 );
+                console.log(msg_ptr);
                 
                 const offset = 35;
                 const msg_data = new Uint8Array(moduleExports.memory.buffer, msg_ptr, offset);
@@ -46,7 +47,7 @@ export const Zbar = (props) => {
         }
     }, [img]);
     return <div>Zbar is working. <br/>
-    <img src="assets/images/newbar_06.jpg" onLoad={e=>{
+    <img src="assets/images/upc-a.jpg" onLoad={e=>{
         setImg(fetch_imgdata_from_image(e.target));
     }}/>
     <canvas ref={canvasRef}/>

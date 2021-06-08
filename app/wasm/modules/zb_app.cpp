@@ -27,21 +27,26 @@ extern "C" char* func_zbar(uint8_t* im_data, int cols, int rows, uint8_t* size) 
     zbar::ImageScanner scanner;
     scanner.set_config(zbar::ZBAR_NONE, zbar::ZBAR_CFG_ENABLE, 1);
     zbar::Image image(mat.cols, mat.rows, "Y800", (uchar *)mat.data, mat.cols * mat.rows);
-    int n = scanner.scan(image);
 
-    // Print results
     DecodeObject obj;
+    obj.type = "";
+    obj.data = "";
+
+    int n = scanner.scan(image);  
+
     for(zbar::Image::SymbolIterator symbol = image.symbol_begin(); symbol != image.symbol_end(); ++symbol) {    
         obj.type = symbol->get_type_name();
-        obj.data = symbol->get_data();
-        obj.amt = n;
+       obj.data = symbol->get_data();
     }
+
+    obj.amt = n;
 
     msgpack::sbuffer sbuf;
     msgpack::pack(sbuf, obj);
 
     *size = sbuf.size();
     return sbuf.data();            
+
 }
 
 #ifdef __EMSCRIPTEN__
@@ -58,7 +63,7 @@ extern "C" uint8_t* func_cvtcolor(uint8_t* im_data, int cols, int rows) {
     DecodeObject obj;
     for(zbar::Image::SymbolIterator symbol = image.symbol_begin(); symbol != image.symbol_end(); ++symbol) {    
         obj.type = symbol->get_type_name();
-        obj.data = symbol->get_data();
+        // obj.data = symbol->get_data();
         obj.amt = n;
     }
 
