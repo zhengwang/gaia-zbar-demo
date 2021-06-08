@@ -50,5 +50,12 @@ cc_binary(
     name = "cvcanny.wasm",
     srcs = ["//app/wasm/modules:cv_canny.cpp"],
     linkopts = DEFAULT_EMSCRIPTEN_LINKOPTS + WASM_LINKOPTS,
-    deps = ["@opencv//:opencv_lib", "@msgpack//:msgpack_lib", ]
+    deps = ["@opencv//:opencv_lib", "@msgpack//:msgpack_lib"]
+)
+
+cc_binary(
+    name = "zbarapp.wasm",
+    srcs = ["//app/wasm/modules:zb_app.cpp"],
+    linkopts = DEFAULT_EMSCRIPTEN_LINKOPTS + WASM_LINKOPTS,
+    deps = ["@opencv//:opencv_lib", "@msgpack//:msgpack_lib", "@zbar//:zbar_lib"]
 )

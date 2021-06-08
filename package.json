@@ -9,6 +9,9 @@
     "em:setup": "bash scripts/em-install.sh",
     "build:copy": "bash scripts/build-copy.sh",
     "build:main": "source scripts/build-env.sh && bash scripts/build-main.sh",
+    "build:canny": "source scripts/build-env.sh && bash scripts/build-canny.sh && bash scripts/build-copy.sh",
+    "build:canny:ubuntu": "bash scripts/build-env-ubuntu.sh && bash scripts/build-canny.sh && bash scripts/build-copy.sh",
+    "build:zbar": "source scripts/build-env.sh && bash scripts/build-zbar.sh && bash scripts/build-copy.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

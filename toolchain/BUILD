@@ -23,7 +23,8 @@ filegroup(
 		"@emsdk//:all",
 		"@boost//:all",
 		"@msgpack//:all",
-		"@opencv//:all"
+		"@opencv//:all",
+		"@zbar//:all"
 	]
 )
 

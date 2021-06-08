@@ -113,6 +113,32 @@ opencv_configure = repository_rule(
 )
 
 
+def _zbar_impl(ctx):
+    print(" ------------------ zbar configure ----------------- ")
+    if "ZBAR" not in ctx.os.environ or ctx.os.environ["ZBAR"].strip() == "":
+        fail("The environment variable ZBAR is not found.")
+    path = ctx.os.environ["ZBAR"]
+    ctx.symlink(path, "zbar")
+    ctx.file("BUILD", """
+filegroup(
+    name = "all",
+    srcs = glob(["zbar/**"]),
+    visibility = ["//visibility:public"]
+)
+
+cc_library(
+    name = "zbar_lib",
+    srcs = glob(["zbar/srcs/**"]),
+    hdrs = glob(["zbar/includes/**"]),
+    strip_include_prefix = "zbar/includes",
+    visibility = ["//visibility:public"])    
+""")
+
+zbar_configure = repository_rule(
+    implementation = _zbar_impl,
+    local = True
+)
+
 def _impl(ctx):
     print(" ----------- cc_toolchain_config ------------- ")
     tool_paths = [
