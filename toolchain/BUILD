@@ -32,9 +32,9 @@ cc_toolchain(
     name = "wasm_toolchain",
     all_files = ":all",
     compiler_files = ":all",
-    dwp_files = ":empty",
+    dwp_files = ":empty", #empty
     linker_files = ":all",
-    objcopy_files = ":empty",
+    objcopy_files = ":empty", #empty
     strip_files = ":empty",
     supports_param_files = 0,
     toolchain_config = ":wasm_toolchain_config",

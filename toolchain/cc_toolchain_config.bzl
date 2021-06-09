@@ -152,7 +152,8 @@ def _impl(ctx):
         ),
         tool_path(
             name = "ar",
-            path = "false.sh"
+            # path = "/Volumes/data/git-repo/gaia-opencv/toolchain/emar.sh"
+            path = "emar.sh"
         ),
         tool_path(
             name = "cpp",

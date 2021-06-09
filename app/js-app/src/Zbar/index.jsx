@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { fetch_imgdata_from_image } from "../misc/img-utils.js";
+import { fetch_imgdata_from_image, getStringFromMemory } from "../misc/img-utils.js";
 import WASMClass from "../misc/WASMClass.js";
-import { encode, decode } from "@msgpack/msgpack";
+// import { encode, decode } from "@msgpack/msgpack";
 
 let moduleExports;
 
@@ -20,10 +20,15 @@ export const Zbar = (props) => {
                     environ_sizes_get: () => {},
                     environ_get: () => {},
                     proc_exit: ()=> {},
-                    clock_time_get: () => {}
+                    clock_time_get: () => {},                    
+                },
+                env: {
+                    log_char_arr: (msg_ptr, size) => {
+                        console.log(getStringFromMemory(msg_ptr, moduleExports));
+                    }
                 }
             }).then(result => {
-                console.log(result);
+                // console.log(result);
                 moduleExports = result.instance.exports;                
                                                                 
                 const img_buffer_ptr = moduleExports.malloc(img.data.length * Uint8ClampedArray.BYTES_PER_ELEMENT);
@@ -34,20 +39,53 @@ export const Zbar = (props) => {
                 const msg_ptr = moduleExports.func_zbar(
                     img_buffer_ptr, 
                     img.width, 
-                    img.height,
-                    msg_buffer_ptr
+                    img.height                    
                 );
                 console.log(msg_ptr);
-                
-                const offset = 35;
-                const msg_data = new Uint8Array(moduleExports.memory.buffer, msg_ptr, offset);
-                const msg = decode(msg_data);
-                console.log(msg);              
+                                
+                const bytes = new Uint8Array(moduleExports.memory.buffer, msg_ptr);                
+                const code_amt = bytes[0];
+
+                //#region ----------- debug --------------
+                // console.log("code amt: " + code_amt);
+                // let character = "";
+                // for(let i =0; i < 128; i++) {
+                //     // console.log(bytes[i]);
+                //     character += String.fromCharCode(bytes[i]);
+                // }
+                // console.log(character);
+                //#endregion
+
+                console.log(" =========== split code ============");
+                for (let amt = 0, offset = 1; amt < code_amt; amt++) {
+                    let type = "", data = "";  
+                    let type_len = bytes[offset];
+                    let data_len = bytes[offset + 1];           
+                    
+                    console.log("type_len: " + type_len);
+                    console.log("data_len: " + data_len);       
+
+                    let info_data_len = type_len + data_len;
+                    // console.log("info_data_len: " + info_data_len);
+
+                    for(let i = offset+2; i < offset + info_data_len + 2; i++) {       
+                        if (i < offset + type_len + 2) {                        
+                            type += String.fromCharCode(bytes[i]);
+                        } else {
+                            data += String.fromCharCode(bytes[i]);
+                        }                    
+                    }
+                    console.log("type is: " + type);
+                    console.log("data is: " + data);
+
+                    offset += info_data_len + 2;
+                    console.log("offset: " + offset);
+                }                
             });
         }
     }, [img]);
     return <div>Zbar is working. <br/>
-    <img src="assets/images/upc-a.jpg" onLoad={e=>{
+    <img src="assets/images/code4.png" onLoad={e=>{
         setImg(fetch_imgdata_from_image(e.target));
     }}/>
     <canvas ref={canvasRef}/>
