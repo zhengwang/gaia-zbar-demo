@@ -1,3 +1,4 @@
 /bazel-*
 /.idea
 node_modules/
+/app/js-app/public/wasm/*
