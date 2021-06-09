@@ -1,8 +1,7 @@
 package(default_visibility = ["//visibility:public"])
 
 DEFAULT_EMSCRIPTEN_LINKOPTS = [
-	"--no-entry",    
-	"-s ERROR_ON_UNDEFINED_SYMBOLS=1",
+	"--no-entry",    	
 	"-s EXPORTED_FUNCTIONS=['_malloc','_free']", 
     "-s USE_PTHREADS=0",         
     # "-s USE_BOOST_HEADERS=1"
@@ -24,6 +23,14 @@ DEFAULT_EMSCRIPTEN_LINKOPTS = [
  #    "-s NODEJS_CATCH_EXIT=0",           # We don't have a 'main' so disable exit() catching
 ]
 
+ERROR_ON_UNDEFINED_SYMBOLS_ON = [
+    "-s ERROR_ON_UNDEFINED_SYMBOLS=1",
+]
+
+ERROR_ON_UNDEFINED_SYMBOLS_OFF = [
+    "-s ERROR_ON_UNDEFINED_SYMBOLS=0",
+]
+
 ASMJS_LINKOPTS = [
     "-s WASM=0",                    # Specify asm.js output
 ]
@@ -42,20 +49,20 @@ cc_binary(
     name = "main.wasm",
     srcs = ["//app/wasm:main.cpp"],
     # copts = MSGPACK_LINKCOPTS,
-    linkopts = DEFAULT_EMSCRIPTEN_LINKOPTS + WASM_LINKOPTS,
+    linkopts = DEFAULT_EMSCRIPTEN_LINKOPTS + WASM_LINKOPTS + ERROR_ON_UNDEFINED_SYMBOLS_ON,
     deps = ["@msgpack//:msgpack_lib", "@opencv//:opencv_lib"]
 )
 
 cc_binary(
     name = "cvcanny.wasm",
     srcs = ["//app/wasm/modules:cv_canny.cpp"],
-    linkopts = DEFAULT_EMSCRIPTEN_LINKOPTS + WASM_LINKOPTS,
+    linkopts = DEFAULT_EMSCRIPTEN_LINKOPTS + WASM_LINKOPTS + ERROR_ON_UNDEFINED_SYMBOLS_ON,
     deps = ["@opencv//:opencv_lib", "@msgpack//:msgpack_lib"]
 )
 
 cc_binary(
     name = "zbarapp.wasm",
     srcs = ["//app/wasm/modules:zb_app.cpp"],
-    linkopts = DEFAULT_EMSCRIPTEN_LINKOPTS + WASM_LINKOPTS,
-    deps = ["@opencv//:opencv_lib", "@msgpack//:msgpack_lib", "@zbar//:zbar_lib"]
+    linkopts = DEFAULT_EMSCRIPTEN_LINKOPTS + WASM_LINKOPTS + ERROR_ON_UNDEFINED_SYMBOLS_OFF,
+    deps = ["@opencv//:opencv_lib", "@zbar//:zbar_lib"]
 )
