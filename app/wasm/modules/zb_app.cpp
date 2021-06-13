@@ -82,6 +82,9 @@ extern "C" uint8_t* func_zbar(uint8_t* im_data, int cols, int rows) {
         }
     }  
 
+    delete grey_im;
+    zbar::zbar_image_destroy(image);
+
     return data_chunk;
 
 }
