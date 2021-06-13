@@ -3,28 +3,10 @@
 #endif
 
 #include "zbar.h"
-// #include <msgpack.hpp>
-// #include "opencv2/core.hpp"
-// #include "opencv2/imgproc.hpp"
 #include <string>
 #include <cstring>
 
 using namespace std;
-
-// struct DecodeObject{
-//     // MSGPACK_DEFINE_MAP(type, data, amt);
-//     string type;
-//     string data;    
-// };
-
-// #ifdef __cplusplus
-// extern "C" {
-// #endif
-// extern void log_float_arr(const float* data_buffer_ptr, int data_buffer_size);
-// extern void log_char_arr(const char* data_buffer_ptr, int data_buffer_size);
-// #ifdef __cplusplus
-// }
-// #endif
 
 uint8_t* _func_flat_symbol(string type, string data) {        
     int len_type = type.length();
@@ -62,32 +44,33 @@ uint8_t* _func_rgba_2_gray(uint8_t* im_data, int cols, int rows) {
 #ifdef __EMSCRIPTEN__
 EMSCRIPTEN_KEEPALIVE
 #endif
+/*
+ * @param im_data: Image databuffer from Uint8Array
+ * @param cols: Image width
+ * @param rows: Image height
+ */
 extern "C" uint8_t* func_zbar(uint8_t* im_data, int cols, int rows) {
-    // cv::Mat mat(rows, cols, CV_8UC4, im_data);
-    // cv::cvtColor(mat, mat, cv::COLOR_RGBA2GRAY);
 
     zbar::ImageScanner scanner;
     scanner.set_config(zbar::ZBAR_NONE, zbar::ZBAR_CFG_ENABLE, 1);
-    // zbar::Image image(mat.cols, mat.rows, "Y800", (uchar *)mat.data, mat.cols * mat.rows);      
     uint8_t* grey_im = _func_rgba_2_gray(im_data, cols, rows);
     zbar::Image image(
         cols, 
         rows, 
-        "Y800", // "BGR4 (RGB32)"
-        (uint8_t*)grey_im,
+        "Y800",
+        (uint8_t*) grey_im,
         cols * rows);   
 
     int n = scanner.scan(image);  
-
-    // ------------ Debug Log ---------------
-    // string msg1 = "after scan";
-    // log_char_arr(msg1.c_str(), 256);	
-    // ------------ Debug Log ---------------
     
     uint8_t* data_chunk = new uint8_t[128];
     data_chunk[0] = n;
     int i = 0;
-    for(zbar::Image::SymbolIterator symbol = image.symbol_begin(); symbol != image.symbol_end(); ++symbol) {         
+    for(
+        zbar::Image::SymbolIterator symbol = image.symbol_begin(); 
+        symbol != image.symbol_end(); 
+        ++symbol) 
+    {         
         string type = symbol->get_type_name();
         string data = symbol->get_data();
 
@@ -97,25 +80,8 @@ extern "C" uint8_t* func_zbar(uint8_t* im_data, int cols, int rows) {
             data_chunk[i+1] = sym_arr[j];
             i++;
         }
-    }
-
-    // ------------ Debug Log ---------------
-    // string msg2 = "after iteration";
-    // log_char_arr(msg2.c_str(), 256);	
-    // ------------ Debug Log ---------------
-        
+    }  
 
     return data_chunk;
 
 }
-
-// #ifdef __EMSCRIPTEN__
-// EMSCRIPTEN_KEEPALIVE
-// #endif
-// extern "C" uint8_t* func_cvtcolor(uint8_t* im_data, int cols, int rows) {
-// 	cv::Mat mat(rows, cols, CV_8UC4, im_data);	
-// 	cv::cvtColor(mat, mat, cv::COLOR_RGBA2GRAY);
-
-//     cv::cvtColor(mat, mat, cv::COLOR_GRAY2RGBA);	
-//     return mat.data;
-// }
