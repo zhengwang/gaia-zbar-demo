@@ -63,6 +63,8 @@ cc_binary(
 cc_binary(
     name = "zbarapp.wasm",
     srcs = ["//app/wasm/modules:zb_app.cpp"],
-    linkopts = DEFAULT_EMSCRIPTEN_LINKOPTS + WASM_LINKOPTS + ERROR_ON_UNDEFINED_SYMBOLS_OFF,
-    deps = ["@opencv//:opencv_lib", "@zbar//:zbar_lib"]
+    linkopts = DEFAULT_EMSCRIPTEN_LINKOPTS + WASM_LINKOPTS + ERROR_ON_UNDEFINED_SYMBOLS_ON,
+    deps = [
+        # "@opencv//:opencv_lib", 
+        "@zbar//:zbar_lib"]
 )
