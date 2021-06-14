@@ -1,6 +1,6 @@
 export default class WASMClass {
     constructor(props) {
-        const { data, instance, wasm_func, width, height } = props;
+        const {data, instance, wasm_func, width, height } = props;
         // console.log(instance);
         this.instance = instance;
         this.width = width;

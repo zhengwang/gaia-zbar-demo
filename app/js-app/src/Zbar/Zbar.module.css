@@ -14,3 +14,14 @@
 .code {
     text-align: center;
 }
+
+@media only screen and (max-width: 768px) {
+    .scanner {
+        /* max-width: 100%; */
+    }
+
+    .scanner canvas {
+        max-width: 100%;
+        height: auto;
+    }
+}

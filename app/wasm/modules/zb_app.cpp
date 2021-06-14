@@ -8,26 +8,63 @@
 
 using namespace std;
 
-uint8_t* _func_flat_symbol(string type, string data) {        
+// first 3 element: type string length, data string length, number of points.
+int GAIA_ZBAR_INFO_LENGTH = 2; 
+
+uint16_t* _func_flat_symbol(
+    string type, 
+    string data, 
+    zbar::Image::SymbolIterator symbol) {        
     int len_type = type.length();
     int len_data = data.length();
-    int max_len = (len_type > len_data ? len_type : len_data) + 2;
+    int len_points = symbol->get_location_size();
+
     
-    int arr_len = len_type + len_data + 2;
-    uint8_t* arr = new uint8_t[arr_len];
+    int max_len = (len_type > len_data) ? len_type : len_data + GAIA_ZBAR_INFO_LENGTH;    
+    int arr_len = GAIA_ZBAR_INFO_LENGTH + len_type + len_data + 4;
+    uint16_t* arr = new uint16_t[arr_len];
     arr[0] = len_type;
     arr[1] = len_data;
+    // arr[2] = 4; // symbol->get_location_size();
     
     for(int i = 0; i < max_len; i++) {
         if (i < len_type) {
-            arr[i+2] = type[i];    
+            arr[i+GAIA_ZBAR_INFO_LENGTH] = type[i];    
         }
         
-        int j = 2 + len_type + i;
+        int j = GAIA_ZBAR_INFO_LENGTH + len_type + i;
         if (i < len_data) {
             arr[j] = data[i];    
-        }
+        }        
     }    
+
+    int i = GAIA_ZBAR_INFO_LENGTH + len_data + len_type;
+
+    int x_min = symbol->get_location_x(0), 
+        y_min = symbol->get_location_y(0), 
+        x_max = x_min, y_max = y_min;
+
+    for(int k = 1; k < len_points; k++) {
+        int x = symbol->get_location_x(k);
+        int y = symbol->get_location_y(k);
+        if (x < x_min) {
+            x_min = x;
+        } else if (x > x_max) {
+             x_max = x;
+        } 
+
+        if (y < y_min) {
+            y_min = y;
+        } else if (y > y_max) {
+            y_max = y;
+        }
+    }
+
+    arr[i] = x_min;
+    arr[i+1] = y_min;
+    arr[i+2] = x_max;
+    arr[i+3] = y_max; 
+
     return arr;
 }
 
@@ -49,7 +86,7 @@ EMSCRIPTEN_KEEPALIVE
  * @param cols: Image width
  * @param rows: Image height
  */
-extern "C" uint8_t* func_zbar(uint8_t* im_data, int cols, int rows) {
+extern "C" void func_zbar(uint8_t* im_data, int cols, int rows, uint16_t* result_data) {
 
     zbar::ImageScanner scanner;
     scanner.set_config(zbar::ZBAR_NONE, zbar::ZBAR_CFG_ENABLE, 1);
@@ -58,13 +95,13 @@ extern "C" uint8_t* func_zbar(uint8_t* im_data, int cols, int rows) {
         cols, 
         rows, 
         "Y800",
-        (uint8_t*) grey_im,
+        (uint8_t*) grey_im,        
         cols * rows);   
 
     int n = scanner.scan(image);  
     
-    uint8_t* data_chunk = new uint8_t[128];
-    data_chunk[0] = n;
+    // uint8_t* data_chunk = new uint8_t[128];
+    result_data[0] = n;
     int i = 0;
     for(
         zbar::Image::SymbolIterator symbol = image.symbol_begin(); 
@@ -73,18 +110,20 @@ extern "C" uint8_t* func_zbar(uint8_t* im_data, int cols, int rows) {
     {         
         string type = symbol->get_type_name();
         string data = symbol->get_data();
+        int loc_size = symbol->get_location_size();
 
-        uint8_t* sym_arr = _func_flat_symbol(type, data);
-        int sym_arr_len = (int)(type.length())+ (int)(data.length()) + 2;
+        uint16_t* sym_arr = _func_flat_symbol(type, data, symbol);
+        int sym_arr_len = GAIA_ZBAR_INFO_LENGTH + (int)(type.length())+ (int)(data.length()) + 4;
         for(int j=0; j < sym_arr_len; j++) {
-            data_chunk[i+1] = sym_arr[j];
+            result_data[i+1] = sym_arr[j];
             i++;
         }
+        // delete sym_arr;
     }  
 
-    delete grey_im;
+    delete grey_im;    
     zbar::zbar_image_destroy(image);
 
-    return data_chunk;
+    // return data_chunk;
 
 }

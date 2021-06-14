@@ -47,14 +47,27 @@ export const ZbarScanner = (props) => {
             const img_data = fetch_imagedata_from_video(video, canvas, 1);
             const _codes = wasmCls.process(img_data.data);
             if (_codes.length > 0) {
-                // console.log(_codes.length);
+                // draw code boundary 
+                for (let i = 0; i < _codes.length; i++) {
+                    const { points: { x0, y0, x1, y1 } } = _codes[i];
+                    const ctx = canvas.getContext("2d");
+                    ctx.lineWidth = 5;
+                    ctx.strokeStyle = "#FF0000";
+                    ctx.beginPath();
+                    ctx.moveTo(x0, y0);
+                    ctx.lineTo(x0, y1);
+                    ctx.lineTo(x1, y1);
+                    ctx.lineTo(x1, y0);
+                    ctx.lineTo(x0, y0);
+                    ctx.stroke();
+                }
+
                 setCodes(_codes);
             }
-            // console.log(_codes);
             //#endregion --------- end -------------------
         };
-        
-        
+
+
         video.addEventListener('play', () => {
             fetch('wasm/zbarapp.wasm').then(response =>
                 response.arrayBuffer()
@@ -69,18 +82,18 @@ export const ZbarScanner = (props) => {
                     width: VIDEO_WIDTH,
                     height: VIDEO_HEIGHT
                 });
-    
-                tick();    
+
+                tick();
             });
 
-            
+
         }, false);
 
     }, [webcamRef, canvasRef]);
 
     useEffect(() => {
         if (webcam_cb) {
-            
+
             webcam_cb();
         }
     }, [webcam_cb]);
@@ -96,20 +109,19 @@ export const ZbarScanner = (props) => {
                 facingMode: "environment"
             }}
         />
-        <div className={`container ${styles.scanner_container}`}>
+        <div className={`container ${styles.scanner_container}`} >
             <div className="row justify-content-md-center">
                 <div className={`col-6 ${styles.code}`}>
                     {codes && codes.map((code, idx) => {
                         return <label key={idx}>{`Barcode: ${code.type} - ${code.data} `}</label>
                     })}
-                </div>                
+                </div>
             </div>
-            <div className="row justify-content-md-center">
+            <div className="row" >
                 <div className={`col-12 ${styles.scanner}`}>
                     <canvas ref={canvasRef} />
                 </div>
             </div>
         </div>
-
     </>
 }
