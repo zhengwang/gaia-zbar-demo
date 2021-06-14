@@ -8,9 +8,21 @@
 
 using namespace std;
 
-// first 3 element: type string length, data string length, number of points.
 int GAIA_ZBAR_INFO_LENGTH = 2; 
 
+/**
+ * Flat Zbar symbol object to an array.
+ * - Type string length
+ * - Data string length
+ * - Type string in char array 
+ * - Data string in char arry
+ * 
+ * @param type: barcode type
+ * @param data: barcode data
+ * @param symbol: SymbolIterator
+ * @return array of flatting Zbar scanner symbol. Consisted of barcode information and two corner points of detected barcode area. 
+ * | type-string-length | data-string-length | char-array of type string | char-array of data string | x0 | y0 | x1 | y1| 
+ * */
 uint16_t* _func_flat_symbol(
     string type, 
     string data, 
@@ -24,8 +36,7 @@ uint16_t* _func_flat_symbol(
     int arr_len = GAIA_ZBAR_INFO_LENGTH + len_type + len_data + 4;
     uint16_t* arr = new uint16_t[arr_len];
     arr[0] = len_type;
-    arr[1] = len_data;
-    // arr[2] = 4; // symbol->get_location_size();
+    arr[1] = len_data;    
     
     for(int i = 0; i < max_len; i++) {
         if (i < len_type) {
@@ -68,6 +79,13 @@ uint16_t* _func_flat_symbol(
     return arr;
 }
 
+/**
+ * Conver RGBA image to Grey
+ * @param im_data: image databuffer. Uint8Array in Javascript
+ * @param cols: image width
+ * @param rows: image height
+ * @return grey image.
+ */
 uint8_t* _func_rgba_2_gray(uint8_t* im_data, int cols, int rows) {
     uint8_t* _gray_im = new uint8_t[cols * rows];
 
@@ -82,9 +100,10 @@ uint8_t* _func_rgba_2_gray(uint8_t* im_data, int cols, int rows) {
 EMSCRIPTEN_KEEPALIVE
 #endif
 /*
- * @param im_data: Image databuffer from Uint8Array
- * @param cols: Image width
- * @param rows: Image height
+ * @param im_data: Image databuffer from Uint8Array.
+ * @param cols: Image width.
+ * @param rows: Image height.
+ * @param result_data: allocated data pointer in emscripten memory buffer, used to return scan result.
  */
 extern "C" void func_zbar(uint8_t* im_data, int cols, int rows, uint16_t* result_data) {
 
@@ -99,8 +118,7 @@ extern "C" void func_zbar(uint8_t* im_data, int cols, int rows, uint16_t* result
         cols * rows);   
 
     int n = scanner.scan(image);  
-    
-    // uint8_t* data_chunk = new uint8_t[128];
+        
     result_data[0] = n;
     int i = 0;
     for(
@@ -117,13 +135,9 @@ extern "C" void func_zbar(uint8_t* im_data, int cols, int rows, uint16_t* result
         for(int j=0; j < sym_arr_len; j++) {
             result_data[i+1] = sym_arr[j];
             i++;
-        }
-        // delete sym_arr;
+        }        
     }  
 
     delete grey_im;    
     zbar::zbar_image_destroy(image);
-
-    // return data_chunk;
-
 }
