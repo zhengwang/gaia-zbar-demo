@@ -21,17 +21,21 @@ export const fetch_imgdata_from_image = (img) => {
  * @param {Number}: scale (0-1)
 */
 export const fetch_imagedata_from_video = (video, canvas, scale) => {
-	const {videoWidth, videoHeight} = video;
-  // console.log(videoWidth + ", " + videoHeight);
+	const {videoWidth, videoHeight} = video;  
 	const _width = videoWidth * scale, _height = videoHeight * scale;
 
 	canvas.width = _width;
 	canvas.height = _height;
 	const context = canvas.getContext("2d");
 	context.drawImage(video, 0, 0, _width, _height);
-	const frame_imgdata = context.getImageData(0, 0, _width, _height);
-	frame_imgdata['context'] = context;
-	return frame_imgdata;
+  try {
+    const frame_imgdata = context.getImageData(0, 0, _width, _height);
+    frame_imgdata['context'] = context;
+    return frame_imgdata;
+  } catch(e) {
+    return null;
+  }
+	
 }
 
 export function getStringFromMemory(memoryOffset, moduleMemory, size=256) {

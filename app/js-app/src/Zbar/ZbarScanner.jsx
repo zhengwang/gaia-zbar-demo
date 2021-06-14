@@ -48,25 +48,28 @@ export const ZbarScanner = (props) => {
 
             //#region -------- processing image ----------
             const img_data = fetch_imagedata_from_video(video, canvas, 1);
-            const _codes = wasmCls.process(img_data.data);
-            if (_codes.length > 0) {
-                // draw code boundary 
-                for (let i = 0; i < _codes.length; i++) {
-                    const { points: { x0, y0, x1, y1 } } = _codes[i];
-                    const ctx = canvas.getContext("2d");
-                    ctx.lineWidth = 5;
-                    ctx.strokeStyle = "#FF0000";
-                    ctx.beginPath();
-                    ctx.moveTo(x0, y0);
-                    ctx.lineTo(x0, y1);
-                    ctx.lineTo(x1, y1);
-                    ctx.lineTo(x1, y0);
-                    ctx.lineTo(x0, y0);
-                    ctx.stroke();
+            if (img_data) {
+                const _codes = wasmCls.process(img_data.data);
+                if (_codes.length > 0) {
+                    // draw code boundary 
+                    for (let i = 0; i < _codes.length; i++) {
+                        const { points: { x0, y0, x1, y1 } } = _codes[i];
+                        const ctx = canvas.getContext("2d");
+                        ctx.lineWidth = 5;
+                        ctx.strokeStyle = "#FF0000";
+                        ctx.beginPath();
+                        ctx.moveTo(x0, y0);
+                        ctx.lineTo(x0, y1);
+                        ctx.lineTo(x1, y1);
+                        ctx.lineTo(x1, y0);
+                        ctx.lineTo(x0, y0);
+                        ctx.stroke();
+                    }
+    
+                    setCodes(_codes);
                 }
-
-                setCodes(_codes);
             }
+            
             //#endregion --------- end -------------------
         };
 
@@ -102,7 +105,8 @@ export const ZbarScanner = (props) => {
 
     useEffect(() => {
         return () => {
-            if(_video) {
+            if(_video) {                
+                _video.pause();
                 const stream = _video.srcObject;
                 const tracks = stream.getTracks();
                 tracks.forEach(track => track.stop());
