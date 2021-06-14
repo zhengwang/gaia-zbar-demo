@@ -4,3 +4,4 @@ node_modules/
 /app/js-app/public/wasm/*
 submodules/emsdk_unix
 *-lock*
+.env
