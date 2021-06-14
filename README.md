@@ -1,5 +1,11 @@
 # gaia-zbar-demo
 
+## Quick Demo
+```
+https://zhengwang.github.io/gaia-zbar-demo/#/
+```
+
+<hr />
 A webassembly project of barcode scanner using Opencv and Zbar library.
 
 This project is built based on
