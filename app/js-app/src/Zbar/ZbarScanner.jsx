@@ -74,7 +74,7 @@ export const ZbarScanner = (props) => {
             ).then(bytes =>
                 WebAssembly.instantiate(bytes, importObj)
             ).then(results => {
-                console.log(results);
+                // console.log(results);
                 moduleExports = results.instance.exports;
                 wasmCls = new ZbarWasmClass({
                     instance: moduleExports,
