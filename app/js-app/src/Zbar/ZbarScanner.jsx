@@ -25,6 +25,8 @@ const VIDEO_WIDTH = 400;
 const VIDEO_HEIGHT = 400;
 
 let moduleExports;
+let _video;
+let wasmCls;
 
 export const ZbarScanner = (props) => {
     const webcamRef = useRef(null);
@@ -35,7 +37,8 @@ export const ZbarScanner = (props) => {
     const webcam_cb = useCallback(() => {
         const { video } = webcamRef.current;
         const canvas = canvasRef.current;
-        let wasmCls;
+        
+        _video = video;
 
         const tick = () => {
             requestAnimationFrame(tick);
@@ -93,10 +96,24 @@ export const ZbarScanner = (props) => {
 
     useEffect(() => {
         if (webcam_cb) {
-
             webcam_cb();
         }
     }, [webcam_cb]);
+
+    useEffect(() => {
+        return () => {
+            if(_video) {
+                const stream = _video.srcObject;
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                _video.srcObject = null;
+            }
+            if (wasmCls && moduleExports) {
+                moduleExports.free(wasmCls.frame_buffer_ptr);
+                moduleExports.free(wasmCls.result_buffer_ptr);
+            }
+        }
+    }, []);
 
     return <>
         <Webcam audio={false}
